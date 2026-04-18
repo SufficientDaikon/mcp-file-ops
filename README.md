@@ -37,8 +37,8 @@
 
 ```
 📖 file_read       — Range support, encoding detection, content hashing
-✏️ file_edit       — Atomic batch edits, external change detection, dry-run
-➕ file_insert     — Position insert, atomic writes, hash verification
+<img src="https://cdn.streamlinehq.com/icons/edit.svg?color=%23333&size=20" /> file_edit       — Atomic batch edits, external change detection, dry-run
+<img src="https://cdn.streamlinehq.com/icons/plus.svg?color=%23333&size=20" /> file_insert     — Position insert, atomic writes, hash verification
 🆕 file_create     — Parent dir auto-create, overwrite protection
 🔍 file_search     — Regex or literal, context extraction, no pollution
 🌳 file_structure  — Python/JS/TS parsing, class/function extraction
