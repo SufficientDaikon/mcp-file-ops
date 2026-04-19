@@ -325,3 +325,83 @@ See [README.md](../README.md#known-shortcomings) for current known issues.
 ---
 
 **Last Updated:** April 2026
+
+---
+
+## Enforce MCP-Only Mode for Claude Code
+
+**Optional:** Force Claude to use the MCP server exclusively, disabling built-in file manipulation tools.
+
+### Why Enforce MCP?
+- Guarantees all file operations are logged + traced
+- Ensures atomic operations (no partial writes)
+- Prevents accidental use of fragile built-in tools
+- Auditable: all operations go through JSON-RPC
+
+### Setup
+
+Edit your Claude Code settings file (`~/.claude/settings.json`):
+
+```json
+{
+  "permissions": {
+    "defaultMode": "bypassPermissions",
+    "allow": [
+      "mcp__pencil",
+      "Bash"
+    ],
+    "deny": [
+      "Read",
+      "Write",
+      "Edit",
+      "Glob",
+      "Grep"
+    ]
+  },
+  "mcpServers": {
+    "file-ops": {
+      "command": "/path/to/mcp-file-ops/rust/target/release/file_ops_rs"
+    }
+  }
+}
+```
+
+### What Gets Disabled
+
+| Tool | Impact | Workaround |
+|------|--------|-----------|
+| `Read` | Can't read files directly | Use `mcp__file-ops__file_read` |
+| `Write` | Can't create files directly | Use `mcp__file-ops__file_create` |
+| `Edit` | Can't edit files directly | Use `mcp__file-ops__file_edit` |
+| `Glob` | Can't search files | Use `mcp__file-ops__file_search` |
+| `Grep` | Can't grep files | Use `mcp__file-ops__file_search` |
+
+### What Stays Enabled
+
+- **Bash** — Shell commands, system integration
+- **Pencil** — Design system (if using)
+- **MCP Servers** — All registered MCP tools
+- **Agent** — Parallel execution
+
+### Verification
+
+Start Claude Code and try to read a file:
+
+```
+User: "Read src/main.rs"
+Claude: [Cannot use Read tool - denied by permissions]
+         [Using MCP instead] mcp__file-ops__file_read(path: "src/main.rs")
+```
+
+All file operations now go through the MCP server with full protocol compliance.
+
+### Audit Trail
+
+With MCP enforcement, all operations are:
+- ✅ Logged with request IDs
+- ✅ Atomic (all-or-nothing)
+- ✅ Validated (JSON-RPC 2.0)
+- ✅ Recoverable (content hashing)
+
+---
+
