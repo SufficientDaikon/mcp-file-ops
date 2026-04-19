@@ -269,3 +269,39 @@ MIT — Use freely in any commercial or personal project.
 Built with ❤️ to solve real engineering problems.
 
 </div>
+
+---
+
+## 🔒 Optional: Enforce MCP-Only Mode
+
+> [!TIP]
+> **Force Claude to use this server exclusively** for all file operations.  
+> Disables fragile built-in tools and guarantees atomic, auditable operations.
+
+### Quick Setup
+
+Add to `~/.claude/settings.json`:
+
+```json
+{
+  "permissions": {
+    "deny": [
+      "Read", "Write", "Edit", "Glob", "Grep"
+    ]
+  },
+  "mcpServers": {
+    "file-ops": {
+      "command": "/path/to/file-ops-rs/target/release/file_ops_rs"
+    }
+  }
+}
+```
+
+**Benefits:**
+- ✅ All file ops logged with request IDs
+- ✅ Atomic writes (no partial updates)
+- ✅ Content hashing (change detection)
+- ✅ Full audit trail
+
+**Complete guide:** See [ENFORCEMENT.md](ENFORCEMENT.md)
+
